@@ -53,7 +53,7 @@ class MinimalisticAreaCard extends LitElement {
     };
 
     private hass!: HomeAssistant;
-    private _config!: MinimalisticAreaCardConfig;
+    private config!: MinimalisticAreaCardConfig;
 
     _entitiesDialog: Array<EntityConfig> = [];
     _entitiesToggle: Array<EntityConfig> = [];
@@ -107,7 +107,7 @@ class MinimalisticAreaCard extends LitElement {
             }
         });
 
-        this._config = {
+        this.config = {
             hold_action: { action: "more-info" },
             ...config,
         };
@@ -120,27 +120,27 @@ class MinimalisticAreaCard extends LitElement {
     }
 
     render() {
-        if (!this._config || !this.hass) {
+        if (!this.config || !this.hass) {
             return html``;
         }
 
         return html`
 <ha-card>
-    ${this._config?.image ? html`<img src="${this._config.image}" />` : null}
+    ${this.config?.image ? html`<img src="${this.config.image}" />` : null}
     <div class="box">
-        <div class="title">${this._config.title}</div>
+        <div class="title">${this.config.title}</div>
         <div class="sensors">
             ${this._entitiesSensor.map((entityConf) =>
             this.renderEntity(entityConf, true, true)
-            )}
+        )}
         </div>
         <div class="buttons">
             ${this._entitiesDialog.map((entityConf) =>
             this.renderEntity(entityConf, true, false)
-            )}
+        )}
             ${this._entitiesToggle.map((entityConf) =>
             this.renderEntity(entityConf, false, false)
-            )}
+        )}
         </div>
     </div>
 </ha-card>
@@ -171,21 +171,25 @@ class MinimalisticAreaCard extends LitElement {
 
         return html`
     <div class="wrapper">
-        <ha-icon-button @action=${this._handleAction} .actionHandler=${actionHandler({ hasHold:
-            hasAction(entityConf.hold_action), hasDoubleClick: hasAction(entityConf.double_tap_action), })}
-            .config=${entityConf} class=${classMap({ "state-on" : stateObj.state && [...STATES_OFF, "unavailable" , "idle"
-            , "disconnected" ].indexOf(stateObj.state.toString().toLowerCase())===-1, })}>
+        <ha-icon-button @action=${this._handleAction} .actionHandler=${actionHandler({
+            hasHold:
+                hasAction(entityConf.hold_action), hasDoubleClick: hasAction(entityConf.double_tap_action),
+        })}
+            .config=${entityConf} class=${classMap({
+            "state-on": stateObj.state && [...STATES_OFF, "unavailable", "idle"
+                , "disconnected"].indexOf(stateObj.state.toString().toLowerCase()) === -1,
+        })}>
             <ha-state-icon .icon=${entityConf.icon} .state=${stateObj}></ha-state-icon>
         </ha-icon-button>
         ${isSensor ? html`
         <div class="state">
             ${entityConf.attribute
-            ? html`
+                    ? html`
             ${entityConf.prefix}${stateObj.attributes[
-            entityConf.attribute
-            ]}${entityConf.suffix}
+                        entityConf.attribute
+                        ]}${entityConf.suffix}
             `
-            : this.computeStateValue(stateObj)}
+                    : this.computeStateValue(stateObj)}
         </div>
         ` : null}
     </div>
@@ -390,12 +394,12 @@ class MinimalisticAreaCard extends LitElement {
     }
 }
 
-customElements.define('minimalistic-area', MinimalisticAreaCard);
+customElements.define('minimalistic-area-card', MinimalisticAreaCard);
 
 const theWindow = window as any;
 theWindow.customCards = theWindow.customCards || [];
 theWindow.customCards.push({
-    type: "minimalistic-area",
+    type: "minimalistic-area-card",
     name: "Minimalistic Area",
     preview: true, // Optional - defaults to false
     description: "Minimalistic Area Card" // Optional
