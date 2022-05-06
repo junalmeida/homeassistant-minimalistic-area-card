@@ -2,10 +2,10 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"type": "npm",
-			"script": "start",
+			"type": "yarn",
+			"task": "start",
 			"problemMatcher": [],
-			"label": "npm: start",
+			"label": "yarn: start",
 			"detail": "rollup -c --watch"
 		}
 	]
