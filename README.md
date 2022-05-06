@@ -13,7 +13,7 @@ A minimalistic area card to have a control panel of your house on your dashboard
 ## Options
 
 ```yaml
- - type: custom:minimalistic-area
+ - type: custom:minimalistic-area-card
    title: Living Room
    image: /local/img/living-room.jpg #any image file on /config/www or an absolute image url
    entities:
