@@ -6,5 +6,8 @@ views:
       - type: custom:minimalistic-area-card
         title: "Kitchen"
         image: "https://demo.home-assistant.io/stub_config/kitchen.png"
+        tap_action:
+          action: navigate
+          navigation_path: /test
         entities:
           - entity: sun.sun

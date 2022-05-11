@@ -16,6 +16,9 @@ A minimalistic area card to have a control panel of your house on your dashboard
  - type: custom:minimalistic-area-card
    title: Living Room
    image: /local/img/living-room.jpg #any image file on /config/www or an absolute image url
+   tap_action:
+      action: navigate
+      navigation_path: /lovelace/living-room
    entities:
       - entity: media_player.living_room_tv
       - entity: switch.fireplace_on_off
