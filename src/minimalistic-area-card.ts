@@ -70,9 +70,16 @@ class MinimalisticAreaCard extends LitElement {
             return item;
     }
 
-    _handleAction(ev: ActionHandlerEvent) {
+    _handleEntityAction(ev: ActionHandlerEvent) {
         const config = (ev.currentTarget as any).config;
         handleAction(this, this.hass, config, ev.detail.action);
+    }
+
+    _handleThisAction(ev: ActionHandlerEvent) {
+        const parent = ((ev.currentTarget as HTMLElement).getRootNode() as any)?.host?.parentElement as HTMLElement;
+        if (this.hass && this.config && ev.detail.action && (!parent || parent.tagName !== "HUI-CARD-PREVIEW")) {
+            handleAction(this, this.hass, this.config, ev.detail.action);
+        }
     }
     // The user supplied configuration. Throw an exception and Home Assistant
     // will render an error card.
@@ -131,19 +138,18 @@ class MinimalisticAreaCard extends LitElement {
         }
 
         return html`
-<ha-card>
-    ${imageUrl ? html`<img src=${imageUrl} />` : null}
-    <div class="box">
-        <div class="title"
-            @action=${this._handleAction}
+<ha-card @action=${this._handleThisAction}
             .actionHandler=${actionHandler({
               hasHold: hasAction(this.config.hold_action),
               hasDoubleClick: hasAction(this.config.double_tap_action),
             })}
             tabindex=${ifDefined(
               hasAction(this.config.tap_action) ? "0" : undefined
-            )}
-        >${this.config.title}</div>
+        )}>
+    ${imageUrl ? html`<img src=${imageUrl} />` : null}
+    <div class="box">
+        <div class="card-header"
+            >${this.config.title}</div>
         <div class="sensors">
             ${this._entitiesSensor.map((entityConf) =>
             this.renderEntity(entityConf, true, true)
@@ -186,7 +192,7 @@ class MinimalisticAreaCard extends LitElement {
 
         return html`
     <div class="wrapper">
-        <ha-icon-button @action=${this._handleAction} .actionHandler=${actionHandler({ hasHold:
+        <ha-icon-button @action=${this._handleEntityAction} .actionHandler=${actionHandler({ hasHold:
             hasAction(entityConf.hold_action), hasDoubleClick: hasAction(entityConf.double_tap_action), })}
             .config=${entityConf} class=${classMap({ "state-on" : stateObj.state && [...STATES_OFF, "unavailable" , "idle"
             , "disconnected" ].indexOf(stateObj.state.toString().toLowerCase())===-1, })}>
@@ -326,7 +332,7 @@ class MinimalisticAreaCard extends LitElement {
       .box {
         text-shadow: 1px 1px 2px black;
         background-color: transparent;
-        
+
         display: flex;
         flex-flow: column nowrap;
         justify-content: flex-start;
@@ -339,12 +345,12 @@ class MinimalisticAreaCard extends LitElement {
         z-index: 1;
       }
 
-      .box .title {
+      .box .card-header {
         padding: 10px 15px;
         font-weight: bold;
         font-size: 1.2em;
       }
-      
+
       .box .sensors {
           white-space: nowrap;
           margin-top: -19px;
@@ -373,6 +379,7 @@ class MinimalisticAreaCard extends LitElement {
             margin-bottom: -12px;
       }
       .box .sensors ha-icon-button {
+            -moz-transform: scale(0.67);
             zoom: 0.67;
             vertical-align: middle;
             margin-bottom: -12px;

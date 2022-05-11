@@ -103,6 +103,8 @@ class ActionHandler extends HTMLElement implements ActionHandler {
     const end = (ev: Event): void => {
       // Prevent mouse event if touch event
       ev.preventDefault();
+      ev.stopPropagation();
+
       if (['touchend', 'touchcancel'].includes(ev.type) && this.timer === undefined) {
         return;
       }
@@ -110,20 +112,20 @@ class ActionHandler extends HTMLElement implements ActionHandler {
       this.stopAnimation();
       this.timer = undefined;
       if (this.held) {
-        fireEvent(element, 'action', { action: 'hold' });
+        fireEvent(element, 'action', { action: 'hold' }, { bubbles: false });
       } else if (options.hasDoubleClick) {
         if ((ev.type === 'click' && (ev as MouseEvent).detail < 2) || !this.dblClickTimeout) {
           this.dblClickTimeout = window.setTimeout(() => {
             this.dblClickTimeout = undefined;
-            fireEvent(element, 'action', { action: 'tap' });
+            fireEvent(element, 'action', { action: 'tap' }, { bubbles: false });
           }, 250);
         } else {
           clearTimeout(this.dblClickTimeout);
           this.dblClickTimeout = undefined;
-          fireEvent(element, 'action', { action: 'double_tap' });
+          fireEvent(element, 'action', { action: 'double_tap' }, { bubbles: false });
         }
       } else {
-        fireEvent(element, 'action', { action: 'tap' });
+        fireEvent(element, 'action', { action: 'tap' }, { bubbles: false });
       }
     };
 
@@ -162,16 +164,15 @@ class ActionHandler extends HTMLElement implements ActionHandler {
   }
 }
 
-// TODO You need to replace all instances of "action-handler-boilerplate" with "action-handler-<your card name>"
-customElements.define('action-handler-boilerplate', ActionHandler);
+customElements.define('action-handler-minimalistic-area-card', ActionHandler);
 
 const getActionHandler = (): ActionHandler => {
   const body = document.body;
-  if (body.querySelector('action-handler-boilerplate')) {
-    return body.querySelector('action-handler-boilerplate') as ActionHandler;
+  if (body.querySelector('action-handler-minimalistic-area-card')) {
+    return body.querySelector('action-handler-minimalistic-area-card') as ActionHandler;
   }
 
-  const actionhandler = document.createElement('action-handler-boilerplate');
+  const actionhandler = document.createElement('action-handler-minimalistic-area-card');
   body.appendChild(actionhandler);
 
   return actionhandler as ActionHandler;
