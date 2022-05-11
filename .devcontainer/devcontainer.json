@@ -1,7 +1,7 @@
 // See https://aka.ms/vscode-remote/devcontainer.json for format details.
 {
   "name": "Minimalistic Area Card Development",
-  "image": "ludeeus/container:monster",
+  "image": "ghcr.io/ludeeus/devcontainer/frontend:latest",
   "context": "..",
   "appPort": [
     "5000:5000",
@@ -26,7 +26,6 @@
   "settings": {
     "files.eol": "\n",
     "editor.tabSize": 4,
-    "terminal.integrated.shell.linux": "/bin/bash",
     "editor.formatOnPaste": false,
     "editor.formatOnSave": true,
     "editor.formatOnType": true,
