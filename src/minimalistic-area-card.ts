@@ -299,6 +299,10 @@ class MinimalisticAreaCard extends LitElement {
         return {
             title: "Kitchen",
             image: "https://demo.home-assistant.io/stub_config/kitchen.png",
+            tap_action: {
+                action: "navigate",
+                navigation_path: "/lovelace-kitchen"
+            },
             entities: [...lights, ...switches, ...sensors, ...binary_sensors],
         };
     }
