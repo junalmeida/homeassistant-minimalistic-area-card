@@ -1,4 +1,4 @@
-import { LovelaceCard, LovelaceCardConfig, LovelaceCardEditor } from 'custom-card-helpers';
+import { ActionConfig, LovelaceCard, LovelaceCardConfig, LovelaceCardEditor } from 'custom-card-helpers';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -13,6 +13,9 @@ export interface MinimalisticAreaCardConfig extends LovelaceCardConfig {
   title?: string;
   image?: string;
   entities?: Array<EntityConfig>;
+  tap_action?: ActionConfig;
+  hold_action?: ActionConfig;
+  double_tap_action?: ActionConfig;
 }
 
 export interface EntityConfig {

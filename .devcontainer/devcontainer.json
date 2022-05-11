@@ -26,7 +26,6 @@
   "settings": {
     "files.eol": "\n",
     "editor.tabSize": 4,
-    "terminal.integrated.shell.linux": "/bin/bash",
     "editor.formatOnPaste": false,
     "editor.formatOnSave": true,
     "editor.formatOnType": true,
