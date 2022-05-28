@@ -36,7 +36,7 @@ For `tap_action` options, see https://www.home-assistant.io/dashboards/actions/.
 
 
 [commits-shield]: https://img.shields.io/github/commit-activity/y/junalmeida/homeassistant-minimalistic-area-card.svg?style=for-the-badge
-[commits]: https://github.com/junalmeida/homeassistant-minimalistic-area-card/commits/master
+[commits]: https://github.com/junalmeida/homeassistant-minimalistic-area-card/commits/main
 [devcontainer]: https://code.visualstudio.com/docs/remote/containers
 [discord]: https://discord.gg/5e9yvq
 [discord-shield]: https://img.shields.io/discord/330944238910963714.svg?style=for-the-badge
