@@ -12,6 +12,10 @@ A minimalistic area card to have a control panel of your house on your dashboard
 
 ## Options
 
+For entity options, see https://www.home-assistant.io/dashboards/entities/#options-for-entities.  
+
+For `tap_action` options, see https://www.home-assistant.io/dashboards/actions/.
+
 ```yaml
  - type: custom:minimalistic-area-card
    title: Living Room
