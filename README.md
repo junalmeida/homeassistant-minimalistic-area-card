@@ -16,6 +16,7 @@ A minimalistic area card to have a control panel of your house on your dashboard
  - type: custom:minimalistic-area-card
    title: Living Room
    image: /local/img/living-room.jpg #any image file on /config/www or an absolute image url
+   background_color: yellow # a color name, rgb hex or rgba function when an image is not provided
    tap_action:
       action: navigate
       navigation_path: /lovelace/living-room
