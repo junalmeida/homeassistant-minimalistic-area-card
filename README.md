@@ -12,10 +12,15 @@ A minimalistic area card to have a control panel of your house on your dashboard
 
 ## Options
 
+For entity options, see https://www.home-assistant.io/dashboards/entities/#options-for-entities.  
+
+For `tap_action` options, see https://www.home-assistant.io/dashboards/actions/.
+
 ```yaml
  - type: custom:minimalistic-area-card
    title: Living Room
    image: /local/img/living-room.jpg #any image file on /config/www or an absolute image url
+   background_color: yellow # a color name, rgb hex or rgba function when an image is not provided
    tap_action:
       action: navigate
       navigation_path: /lovelace/living-room

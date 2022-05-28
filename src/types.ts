@@ -12,7 +12,8 @@ export interface MinimalisticAreaCardConfig extends LovelaceCardConfig {
   type: string;
   title?: string;
   image?: string;
-  entities?: Array<EntityConfig>;
+  background_color?: string;
+  entities: Array<EntityConfig>;
   tap_action?: ActionConfig;
   hold_action?: ActionConfig;
   double_tap_action?: ActionConfig;

@@ -13,7 +13,7 @@ import { MinimalisticAreaCardConfig } from './types';
 
 /* eslint no-console: 0 */
 console.info(
-    `%c  Minimalistic Area Card  %c 1.0.5 `,
+    `%c  Minimalistic Area Card  %c 1.0.6 `,
     'color: orange; font-weight: bold; background: black',
     'color: white; font-weight: bold; background: dimgray',
 );
@@ -88,9 +88,7 @@ class MinimalisticAreaCard extends LitElement {
         if (
             !config ||
             !config.entities ||
-            !Array.isArray(config.entities) ||
-            !(config.image || config.camera_image || config.state_image) ||
-            (config.state_image && !config.entity)
+            !Array.isArray(config.entities)
         ) {
             throw new Error("Invalid configuration");
         }
@@ -132,13 +130,15 @@ class MinimalisticAreaCard extends LitElement {
         if (!this.config || !this.hass) {
             return html``;
         }
+        const color = this.config.background_color ? `background-color: ${this.config.background_color}` : "";
         let imageUrl: string | undefined = undefined;
         if (this.config.image) {
             imageUrl = (new URL(this.config.image, this.hass.auth.data.hassUrl)).toString();
         }
 
+
         return html`
-<ha-card @action=${this._handleThisAction}
+        <ha-card @action=${this._handleThisAction} style=${color}
             .actionHandler=${actionHandler({
               hasHold: hasAction(this.config.hold_action),
               hasDoubleClick: hasAction(this.config.double_tap_action),
