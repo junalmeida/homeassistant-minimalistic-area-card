@@ -1,0 +1,43 @@
+name: Bug Report
+description: File a bug report
+title: "[Bug]: "
+labels: ["bug", "triage"]
+assignees:
+  - junalmeida
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report. Please consider sponsoring if you feel that this project is somehow useful to you.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Also tell us, what did you expect to happen?
+    validations:
+      required: true
+
+  - type: input
+    id: addon-version
+    attributes:
+      label: Card Version
+      description: What is the card version you are running?
+      value: "x.x.x.x"
+    validations:
+      required: true
+
+  - type: input
+    id: homeassistant-version
+    attributes:
+      label: HomeAssistant Version
+      description: What version of homeassistant are you running?
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant javascript log output
+      description: Please copy and paste any relevant log output. Remember to *redact any sensitive information*.
+      render: shell

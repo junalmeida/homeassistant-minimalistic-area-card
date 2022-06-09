@@ -9,6 +9,9 @@ A minimalistic area card to have a control panel of your house on your dashboard
 
 ![Sample preview](docs/sample.png)
 
+Please consider sponsoring if you feel that this project is somehow useful to you.  
+[![BuyMeCoffee][buymecoffeebadge]][buymecoffee]  
+
 
 ## Options
 
@@ -46,3 +49,5 @@ For `tap_action` options, see https://www.home-assistant.io/dashboards/actions/.
 [maintenance-shield]: https://img.shields.io/maintenance/yes/2021.svg?style=for-the-badge
 [releases-shield]: https://img.shields.io/github/release/junalmeida/homeassistant-minimalistic-area-card.svg?style=for-the-badge
 [releases]: https://github.com/junalmeida/homeassistant-minimalistic-area-card/releases
+[buymecoffee]: https://www.buymeacoffee.com/junalmeida
+[buymecoffeebadge]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-orange?style=plastic&logo=buymeacoffee
