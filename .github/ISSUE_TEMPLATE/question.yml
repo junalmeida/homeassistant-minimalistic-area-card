@@ -1,0 +1,43 @@
+name: Question
+description: Ask a question or a feature request
+title: "[Question]: "
+labels: ["question"]
+assignees:
+  - junalmeida
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time using this project. Please consider sponsoring if you feel that this project is somehow useful to you.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Ask your question or feature request
+    validations:
+      required: true
+
+  - type: input
+    id: addon-version
+    attributes:
+      label: Card Version
+      description: What is the card version you are running?
+      value: "x.x.x.x"
+    validations:
+      required: true
+
+  - type: input
+    id: homeassistant-version
+    attributes:
+      label: HomeAssistant Version
+      description: What version of homeassistant are you running?
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Please copy and paste any relevant log output.
+      render: shell
