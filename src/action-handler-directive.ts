@@ -1,8 +1,9 @@
 import { noChange } from 'lit';
 import { AttributePart, directive, Directive, DirectiveParameters } from 'lit/directive';
 
-import { ActionHandlerDetail, ActionHandlerOptions } from 'custom-card-helpers/dist/types';
 import { fireEvent } from 'custom-card-helpers';
+import { ActionHandlerDetail, ActionHandlerOptions } from 'custom-card-helpers/dist/types';
+import { cardType } from './types';
 
 const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.maxTouchPoints > 0;
 
@@ -164,15 +165,15 @@ class ActionHandler extends HTMLElement implements ActionHandler {
   }
 }
 
-customElements.define('action-handler-minimalistic-area-card', ActionHandler);
+customElements.define('action-handler-' + cardType, ActionHandler);
 
 const getActionHandler = (): ActionHandler => {
   const body = document.body;
-  if (body.querySelector('action-handler-minimalistic-area-card')) {
-    return body.querySelector('action-handler-minimalistic-area-card') as ActionHandler;
+  if (body.querySelector('action-handler-' + cardType)) {
+    return body.querySelector('action-handler-' + cardType) as ActionHandler;
   }
 
-  const actionhandler = document.createElement('action-handler-minimalistic-area-card');
+  const actionhandler = document.createElement('action-handler-' + cardType);
   body.appendChild(actionhandler);
 
   return actionhandler as ActionHandler;
@@ -194,6 +195,6 @@ export const actionHandler = directive(
     }
 
     // eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
-    render(_options?: ActionHandlerOptions) {}
+    render(_options?: ActionHandlerOptions) { }
   },
 );

@@ -7,18 +7,26 @@ declare global {
   }
 }
 
-// TODO Add your configuration elements here for type-checking
 export interface MinimalisticAreaCardConfig extends LovelaceCardConfig {
   type: string;
   title?: string;
   image?: string;
+  area?: string;
   background_color?: string;
-  entities: Array<EntityConfig>;
+  hide_unavailable?: boolean;
+  entities?: Array<EntityConfig | string>;
   tap_action?: ActionConfig;
   hold_action?: ActionConfig;
   double_tap_action?: ActionConfig;
 }
 
+export interface HomeAssistantArea {
+  area_id: string,
+  picture: string,
+  name: string
+}
 export interface EntityConfig {
   entity: string;
 }
+
+export const cardType = "minimalistic-area-card";
