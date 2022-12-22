@@ -50,8 +50,8 @@ const createEntityNotFoundWarning = (
 
 type HomeAssistantExt = HomeAssistant & {
     areas: { [key: string]: HomeAssistantArea },
-    entities: { [key: string]: { area_id?: string, entity_id: string, device_id?: string } }
-    devices: { [key: string]: { area_id?: string } }
+    entities: { [key: string]: { area_id?: string, entity_id: string, device_id?: string, entity_category?: string, disabled_by?: string } }
+    devices: { [key: string]: { area_id?: string, disabled_by?: string } }
 };
 class MinimalisticAreaCard extends LitElement {
     static properties = {
@@ -66,6 +66,7 @@ class MinimalisticAreaCard extends LitElement {
 
     override async performUpdate() {
         await this.setArea();
+        this.setEntities();
         await super.performUpdate();
     }
 
@@ -95,6 +96,31 @@ class MinimalisticAreaCard extends LitElement {
     _entitiesDialog: Array<EntityConfig> = [];
     _entitiesToggle: Array<EntityConfig> = [];
     _entitiesSensor: Array<EntityConfig> = [];
+
+    setEntities() {
+        this._entitiesDialog = [];
+        this._entitiesToggle = [];
+        this._entitiesSensor = [];
+
+        const entities = this.config?.entities || this.areaEntities || [];
+
+        entities.forEach((item) => {
+
+            const entity = this.parseEntity(item);
+            const [domain, _] = entity.entity.split('.');
+            if (SENSORS.indexOf(domain) !== -1) {
+                this._entitiesSensor.push(entity);
+            }
+            else if (
+                this.config?.force_dialog ||
+                DOMAINS_TOGGLE.indexOf(domain) === -1
+            ) {
+                this._entitiesDialog.push(entity);
+            } else {
+                this._entitiesToggle.push(entity);
+            }
+        });
+    }
 
     parseEntity(item: EntityConfig | string) {
         if (typeof item === "string")
@@ -127,29 +153,6 @@ class MinimalisticAreaCard extends LitElement {
         ) {
             throw new Error("Invalid configuration");
         }
-
-        this._entitiesDialog = [];
-        this._entitiesToggle = [];
-        this._entitiesSensor = [];
-
-        const entities = config.entities || this.areaEntities || [];
-
-        entities.forEach((item) => {
-
-            const entity = this.parseEntity(item);
-            const [domain, _] = entity.entity.split('.');
-            if (SENSORS.indexOf(domain) !== -1) {
-                this._entitiesSensor.push(entity);
-            }
-            else if (
-                config.force_dialog ||
-                DOMAINS_TOGGLE.indexOf(domain) === -1
-            ) {
-                this._entitiesDialog.push(entity);
-            } else {
-                this._entitiesToggle.push(entity);
-            }
-        });
 
         this.config = {
             hold_action: { action: "more-info" },
@@ -311,7 +314,14 @@ class MinimalisticAreaCard extends LitElement {
         const area = hass.areas && hass.areas[area_id];
         const areaEntities = hass.entities && area &&
             Object.keys(hass.entities)
-                .filter((e) => hass.entities[e].area_id === area.area_id || hass.devices[hass.entities[e].device_id || ""]?.area_id === area.area_id)
+                .filter((e) =>
+                    !hass.entities[e].disabled_by &&
+                    hass.entities[e].entity_category !== "diagnostic" &&
+                    hass.entities[e].entity_category !== "config" && (
+                        hass.entities[e].area_id === area.area_id ||
+                        hass.devices[hass.entities[e].device_id || ""]?.area_id === area.area_id
+                    )
+                )
                 .map((x) => x);
         return areaEntities;
     }
