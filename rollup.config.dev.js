@@ -17,7 +17,7 @@ export default {
   },
   plugins: [
     resolve(),
-    typescript(),
+    typescript({ sourceMap: true, inlineSources: true }),
     json(),
     babel({
       exclude: 'node_modules/**',

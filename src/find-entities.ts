@@ -1,5 +1,6 @@
 import { computeDomain, HomeAssistant } from "custom-card-helpers";
 import { HassEntity } from "home-assistant-js-websocket";
+import { HomeAssistantArea } from "./types";
 
 const arrayFilter = (
     array: any[],
@@ -41,7 +42,7 @@ export const findEntities = (
     const conditions: Array<(value: string) => boolean> = [];
 
     if (includeDomains?.length) {
-        conditions.push((eid) => includeDomains!.includes(computeDomain(eid)));
+        conditions.push((eid) => includeDomains.includes(computeDomain(eid)));
     }
 
     if (entityFilter) {
@@ -67,3 +68,20 @@ export const findEntities = (
 
     return entityIds;
 };
+
+export async function subscribeAreas(hass: HomeAssistant): Promise<HomeAssistantArea[] | undefined> {
+    if (!hass || !hass.connection || !hass.connected) {
+        return undefined;
+    }
+    else {
+        const result = (await hass.connection.sendMessagePromise({
+            type: 'config/area_registry/list'
+        })) as HomeAssistantArea[];
+
+        if (!result)
+            return undefined;
+        else
+            return result;
+
+    }
+}

@@ -6,37 +6,35 @@ A minimalistic area card to have a control panel of your house on your dashboard
 [![License][license-shield]](LICENSE.md)
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge)](https://github.com/custom-components/hacs)
 
-
 ![Sample preview](docs/sample.png)
 
 Please consider sponsoring if you feel that this project is somehow useful to you.  
-[![BuyMeCoffee][buymecoffeebadge]][buymecoffee]  
-
+[![BuyMeCoffee][buymecoffeebadge]][buymecoffee]
 
 ## Options
 
-For entity options, see https://www.home-assistant.io/dashboards/entities/#options-for-entities.  
+For entity options, see https://www.home-assistant.io/dashboards/entities/#options-for-entities.
 
 For `tap_action` options, see https://www.home-assistant.io/dashboards/actions/.
 
 ```yaml
- - type: custom:minimalistic-area-card
-   title: Living Room
-   image: /local/img/living-room.jpg #any image file on /config/www or an absolute image url
-   background_color: yellow # a color name, rgb hex or rgba function when an image is not provided
-   tap_action:
-      action: navigate
-      navigation_path: /lovelace/living-room
-   entities:
-      - entity: media_player.living_room_tv
-      - entity: switch.fireplace_on_off
-      - entity: cover.window_covering
-      - entity: media_player.speaker
-      - entity: light.living_room_lamp
-      - entity: sensor.hallway_humidity
-      - entity: sensor.hallway_temperature
+- type: custom:minimalistic-area-card
+  title: Living Room
+  image: /local/img/living-room.jpg #any image file on /config/www or an absolute image url. optional, it uses area image if area is specified.
+  area: living_room # area id of an existing area defined in HA.
+  background_color: yellow # a color name, rgb hex or rgba function when an image is not provided
+  tap_action:
+    action: navigate
+    navigation_path: /lovelace/living-room
+  entities: #optional, lists area entities automatically if ommited.
+    - entity: media_player.living_room_tv
+    - entity: switch.fireplace_on_off
+    - entity: cover.window_covering
+    - entity: media_player.speaker
+    - entity: light.living_room_lamp
+    - entity: sensor.hallway_humidity
+    - entity: sensor.hallway_temperature
 ```
-
 
 [commits-shield]: https://img.shields.io/github/commit-activity/y/junalmeida/homeassistant-minimalistic-area-card.svg?style=for-the-badge
 [commits]: https://github.com/junalmeida/homeassistant-minimalistic-area-card/commits/main

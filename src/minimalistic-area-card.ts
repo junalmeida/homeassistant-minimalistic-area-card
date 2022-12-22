@@ -2,14 +2,15 @@
 import {
     ActionHandlerEvent,
     EntityConfig,
-    handleAction, hasAction, hasConfigOrEntityChanged, HomeAssistant
+    handleAction, hasAction, hasConfigOrEntityChanged, HomeAssistant, NavigateActionConfig
 } from 'custom-card-helpers'; // This is a community maintained npm module with common helper functions/types. https://github.com/custom-cards/custom-card-helpers
 import { css, html, LitElement } from 'lit';
 import { classMap } from 'lit/directives/class-map';
 import { ifDefined } from "lit/directives/if-defined";
 import { actionHandler } from './action-handler-directive';
 import { findEntities } from './find-entities';
-import { MinimalisticAreaCardConfig } from './types';
+import { cardType, HomeAssistantArea, MinimalisticAreaCardConfig } from './types';
+
 
 /* eslint no-console: 0 */
 console.info(
@@ -47,15 +48,49 @@ const createEntityNotFoundWarning = (
         )
         : hass.localize("ui.panel.lovelace.warning.starting");
 
-
+type HomeAssistantExt = HomeAssistant & {
+    areas: { [key: string]: HomeAssistantArea },
+    entities: { [key: string]: { area_id?: string, entity_id: string, device_id?: string } }
+    devices: { [key: string]: { area_id?: string } }
+};
 class MinimalisticAreaCard extends LitElement {
     static properties = {
         hass: { attribute: false },
         config: { state: true }
     };
 
-    private hass!: HomeAssistant;
+    private hass!: HomeAssistantExt;
     private config!: MinimalisticAreaCardConfig;
+    private area?: HomeAssistantArea;
+    private areaEntities?: string[];
+
+    override async performUpdate() {
+        await this.setArea();
+        await super.performUpdate();
+    }
+
+    async setArea() {
+        if (this.hass?.connected) {
+            if (this.config && this.config.area) {
+                const area = this.hass.areas[this.config.area];
+                if (area) {
+                    this.area = area;
+                    this.areaEntities = MinimalisticAreaCard.findAreaEntities(this.hass, area.area_id);
+                }
+                else {
+                    this.area = undefined;
+                    this.areaEntities = undefined;
+                }
+            }
+            else {
+                this.area = undefined;
+                this.areaEntities = undefined;
+            }
+        }
+        else {
+            console.error("Invalid hass connection");
+        }
+    }
 
     _entitiesDialog: Array<EntityConfig> = [];
     _entitiesToggle: Array<EntityConfig> = [];
@@ -87,8 +122,8 @@ class MinimalisticAreaCard extends LitElement {
 
         if (
             !config ||
-            !config.entities ||
-            !Array.isArray(config.entities)
+            (config.entities &&
+                !Array.isArray(config.entities))
         ) {
             throw new Error("Invalid configuration");
         }
@@ -97,7 +132,9 @@ class MinimalisticAreaCard extends LitElement {
         this._entitiesToggle = [];
         this._entitiesSensor = [];
 
-        config.entities.forEach((item) => {
+        const entities = config.entities || this.areaEntities || [];
+
+        entities.forEach((item) => {
 
             const entity = this.parseEntity(item);
             const [domain, _] = entity.entity.split('.');
@@ -132,19 +169,19 @@ class MinimalisticAreaCard extends LitElement {
         }
         const color = this.config.background_color ? `background-color: ${this.config.background_color}` : "";
         let imageUrl: string | undefined = undefined;
-        if (this.config.image) {
-            imageUrl = (new URL(this.config.image, this.hass.auth.data.hassUrl)).toString();
+        if (this.config.image || this.area?.picture) {
+            imageUrl = (new URL(this.config.image || this.area?.picture || "", this.hass.auth.data.hassUrl)).toString();
         }
 
 
         return html`
         <ha-card @action=${this._handleThisAction} style=${color}
             .actionHandler=${actionHandler({
-              hasHold: hasAction(this.config.hold_action),
-              hasDoubleClick: hasAction(this.config.double_tap_action),
-            })}
+            hasHold: hasAction(this.config.hold_action),
+            hasDoubleClick: hasAction(this.config.double_tap_action),
+        })}
             tabindex=${ifDefined(
-              hasAction(this.config.tap_action) ? "0" : undefined
+            hasAction(this.config.tap_action) ? "0" : undefined
         )}>
     ${imageUrl ? html`<img src=${imageUrl} />` : null}
     <div class="box">
@@ -153,15 +190,15 @@ class MinimalisticAreaCard extends LitElement {
         <div class="sensors">
             ${this._entitiesSensor.map((entityConf) =>
             this.renderEntity(entityConf, true, true)
-            )}
+        )}
         </div>
         <div class="buttons">
             ${this._entitiesDialog.map((entityConf) =>
             this.renderEntity(entityConf, true, false)
-            )}
+        )}
             ${this._entitiesToggle.map((entityConf) =>
             this.renderEntity(entityConf, false, false)
-            )}
+        )}
         </div>
     </div>
 </ha-card>
@@ -181,32 +218,39 @@ class MinimalisticAreaCard extends LitElement {
             ...entityConf,
         };
 
-        if (!stateObj) {
+        if (!stateObj && !this.config.hide_unavailable) {
             return html`
             <div class="wrapper">
                 <hui-warning-element .label=${createEntityNotFoundWarning(this.hass, entityConf.entity)}></hui-warning-element>
             </div>
       `;
         }
+        else if (!stateObj && this.config.hide_unavailable) {
+            return html``;
+        }
 
 
         return html`
     <div class="wrapper">
-        <ha-icon-button @action=${this._handleEntityAction} .actionHandler=${actionHandler({ hasHold:
-            hasAction(entityConf.hold_action), hasDoubleClick: hasAction(entityConf.double_tap_action), })}
-            .config=${entityConf} class=${classMap({ "state-on" : stateObj.state && [...STATES_OFF, "unavailable" , "idle"
-            , "disconnected" ].indexOf(stateObj.state.toString().toLowerCase())===-1, })}>
+        <ha-icon-button @action=${this._handleEntityAction} .actionHandler=${actionHandler({
+            hasHold:
+                hasAction(entityConf.hold_action), hasDoubleClick: hasAction(entityConf.double_tap_action),
+        })}
+            .config=${entityConf} class=${classMap({
+            "state-on": stateObj.state && [...STATES_OFF, "unavailable", "idle"
+                , "disconnected"].indexOf(stateObj.state.toString().toLowerCase()) === -1,
+        })}>
             <ha-state-icon .icon=${entityConf.icon} .state=${stateObj}></ha-state-icon>
         </ha-icon-button>
         ${isSensor ? html`
         <div class="state">
             ${entityConf.attribute
-            ? html`
+                    ? html`
             ${entityConf.prefix}${stateObj.attributes[
-            entityConf.attribute
-            ]}${entityConf.suffix}
+                        entityConf.attribute
+                        ]}${entityConf.suffix}
             `
-            : this.computeStateValue(stateObj)}
+                    : this.computeStateValue(stateObj)}
         </div>
         ` : null}
     </div>
@@ -263,20 +307,33 @@ class MinimalisticAreaCard extends LitElement {
         return false;
     }
 
-    static getStubConfig(hass,
-        entities,
-        entitiesFallback) {
+    static findAreaEntities(hass: HomeAssistantExt, area_id: string) {
+        const area = hass.areas && hass.areas[area_id];
+        const areaEntities = hass.entities && area &&
+            Object.keys(hass.entities)
+                .filter((e) => hass.entities[e].area_id === area.area_id || hass.devices[hass.entities[e].device_id || ""]?.area_id === area.area_id)
+                .map((x) => x);
+        return areaEntities;
+    }
+
+    static getStubConfig(hass: HomeAssistantExt,
+        entities: string[],
+        entitiesFallback: string[]) {
+
+        const area = hass.areas && hass.areas[Object.keys(hass.areas)[0]];
+        const areaEntities = MinimalisticAreaCard.findAreaEntities(hass, area.area_id);
+
         const lights = findEntities(
             hass,
             2,
-            entities,
+            areaEntities?.length ? areaEntities : entities,
             entitiesFallback,
             ["light"]
         );
         const switches = findEntities(
             hass,
             2,
-            entities,
+            areaEntities?.length ? areaEntities : entities,
             entitiesFallback,
             ["switch"]
         );
@@ -284,27 +341,39 @@ class MinimalisticAreaCard extends LitElement {
         const sensors = findEntities(
             hass,
             2,
-            entities,
+            areaEntities?.length ? areaEntities : entities,
             entitiesFallback,
             ["sensor"]
         );
         const binary_sensors = findEntities(
             hass,
             2,
-            entities,
+            areaEntities?.length ? areaEntities : entities,
             entitiesFallback,
             ["binary_sensor"]
         );
 
-        return {
+        const obj = {
             title: "Kitchen",
             image: "https://demo.home-assistant.io/stub_config/kitchen.png",
+            area: "",
+            hide_unavailable: false,
             tap_action: {
                 action: "navigate",
                 navigation_path: "/lovelace-kitchen"
             },
             entities: [...lights, ...switches, ...sensors, ...binary_sensors],
-        };
+        } as MinimalisticAreaCardConfig;
+        if (area) {
+            obj.area = area.area_id;
+            obj.title = area.name;
+            (obj.tap_action as NavigateActionConfig).navigation_path = "/config/areas/area/" + area.area_id;
+            delete obj.image;
+        }
+        else {
+            delete obj.area;
+        }
+        return obj;
     }
 
     static get styles() {
@@ -416,12 +485,12 @@ class MinimalisticAreaCard extends LitElement {
     }
 }
 
-customElements.define('minimalistic-area-card', MinimalisticAreaCard);
+customElements.define(cardType, MinimalisticAreaCard);
 
 const theWindow = window as any;
 theWindow.customCards = theWindow.customCards || [];
 theWindow.customCards.push({
-    type: "minimalistic-area-card",
+    type: cardType,
     name: "Minimalistic Area",
     preview: true, // Optional - defaults to false
     description: "Minimalistic Area Card" // Optional
