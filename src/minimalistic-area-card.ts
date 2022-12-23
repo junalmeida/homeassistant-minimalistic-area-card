@@ -172,7 +172,7 @@ class MinimalisticAreaCard extends LitElement {
         }
         const color = this.config.background_color ? `background-color: ${this.config.background_color}` : "";
         let imageUrl: string | undefined = undefined;
-        if (this.config.image || this.area?.picture) {
+        if (!this.config.camera_image && (this.config.image || this.area?.picture)) {
             imageUrl = (new URL(this.config.image || this.area?.picture || "", this.hass.auth.data.hassUrl)).toString();
         }
 
@@ -187,6 +187,14 @@ class MinimalisticAreaCard extends LitElement {
             hasAction(this.config.tap_action) ? "0" : undefined
         )}>
     ${imageUrl ? html`<img src=${imageUrl} />` : null}
+    ${this.config.camera_image ? html`<div class="camera"><hui-image
+            .hass=${this.hass}
+            .cameraImage=${this.config.camera_image}
+            .entity=${this.config.camera_image}
+            .cameraView=${this.config.camera_view || "auto"}
+            .width="100%"
+          ></hui-image></div>` : null}
+
     <div class="box">
         <div class="card-header"
             >${this.config.title}</div>
@@ -410,6 +418,21 @@ class MinimalisticAreaCard extends LitElement {
           z-index: -1;
           pointer-events: none;
           border-radius: var(--ha-card-border-radius)
+      }
+
+      div.camera {
+          height: 100%;
+          width: 100%;
+          overflow: hidden;
+         
+          position: absolute;
+          z-index: -1;
+          pointer-events: none;
+          border-radius: var(--ha-card-border-radius);
+      }
+
+      div.camera hui-image {
+        margin-top: -30%;
       }
 
       .box {
