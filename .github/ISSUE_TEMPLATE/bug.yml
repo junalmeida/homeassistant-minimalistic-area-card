@@ -30,8 +30,8 @@ body:
   - type: input
     id: homeassistant-version
     attributes:
-      label: HomeAssistant Version
-      description: What version of homeassistant are you running?
+      label: Home Assistant Version
+      description: What version of home-assistant are you running?
     validations:
       required: true
 
