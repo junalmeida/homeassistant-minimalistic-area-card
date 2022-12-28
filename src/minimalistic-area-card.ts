@@ -425,14 +425,18 @@ class MinimalisticAreaCard extends LitElement {
           width: 100%;
           overflow: hidden;
          
-          position: absolute;
+          position: absolute; 
+          left: 0; top: 0; 
+          
           z-index: -1;
           pointer-events: none;
           border-radius: var(--ha-card-border-radius);
       }
 
       div.camera hui-image {
-        margin-top: -30%;
+          position: relative; 
+          top: 50%;
+          transform: translateY(-50%);
       }
 
       .box {
