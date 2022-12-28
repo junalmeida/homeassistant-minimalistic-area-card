@@ -35,6 +35,14 @@ body:
     validations:
       required: true
 
+  - type: input
+    id: browser-version
+    attributes:
+      label: Browser Version
+      description: What browser app and version are you running the dashboard? eg: Edge vXXX, Home Assistant iOS App vXXX
+    validations:
+      required: true
+      
   - type: textarea
     id: logs
     attributes:
