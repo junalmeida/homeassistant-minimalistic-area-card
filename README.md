@@ -20,9 +20,11 @@ For `tap_action` options, see https://www.home-assistant.io/dashboards/actions/.
 ```yaml
 - type: custom:minimalistic-area-card
   title: Living Room
-  image: /local/img/living-room.jpg #any image file on /config/www or an absolute image url. optional, it uses area image if area is specified.
-  area: living_room # area id of an existing area defined in HA.
-  background_color: yellow # a color name, rgb hex or rgba function when an image is not provided
+  image: /local/img/living-room.jpg #any image file on /config/www or an absolute image url. optional, it uses area image if area is specified. (optional)
+  area: living_room # area id of an existing area defined in HA. (optional)
+  background_color: yellow # a color name, rgb hex or rgba function when an image is not provided (optional)
+  camera_image: camera.living_room # a camera entity to use as background (optional)
+  camera_view: "auto" # auto, live (optional)
   tap_action:
     action: navigate
     navigation_path: /lovelace/living-room
