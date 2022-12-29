@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
     ActionHandlerEvent,
-    EntityConfig,
+    EntitiesCardEntityConfig,
     handleAction, hasAction, hasConfigOrEntityChanged, HomeAssistant, NavigateActionConfig
 } from 'custom-card-helpers'; // This is a community maintained npm module with common helper functions/types. https://github.com/custom-cards/custom-card-helpers
 import { css, html, LitElement } from 'lit';
@@ -36,6 +36,12 @@ const DOMAINS_TOGGLE = [
     "humidifier",
 ];
 
+type ExtendedEntityConfig = EntitiesCardEntityConfig & {
+    prefix?: string;
+    suffix?: string;
+    show_state?: boolean;
+    attribute?: string;
+};
 
 const createEntityNotFoundWarning = (
     hass,
@@ -94,9 +100,9 @@ class MinimalisticAreaCard extends LitElement {
         }
     }
 
-    _entitiesDialog: Array<EntityConfig> = [];
-    _entitiesToggle: Array<EntityConfig> = [];
-    _entitiesSensor: Array<EntityConfig> = [];
+    _entitiesDialog: Array<ExtendedEntityConfig> = [];
+    _entitiesToggle: Array<ExtendedEntityConfig> = [];
+    _entitiesSensor: Array<ExtendedEntityConfig> = [];
 
     setEntities() {
         this._entitiesDialog = [];
@@ -123,11 +129,11 @@ class MinimalisticAreaCard extends LitElement {
         });
     }
 
-    parseEntity(item: EntityConfig | string) {
+    parseEntity(item: ExtendedEntityConfig | string) {
         if (typeof item === "string")
             return {
                 entity: item
-            } as EntityConfig;
+            } as ExtendedEntityConfig;
         else
             return item;
     }
@@ -218,7 +224,7 @@ class MinimalisticAreaCard extends LitElement {
     }
 
     renderEntity(
-        entityConf: EntityConfig,
+        entityConf: ExtendedEntityConfig,
         dialog: boolean,
         isSensor: boolean
     ) {
