@@ -11,10 +11,11 @@ import { actionHandler } from './action-handler-directive';
 import { findEntities } from './find-entities';
 import { cardType, HomeAssistantArea, MinimalisticAreaCardConfig } from './types';
 
+import { version as pkgVersion } from "../package.json";
 
 /* eslint no-console: 0 */
 console.info(
-    `%c  Minimalistic Area Card  %c 1.0.6 `,
+    `%c  Minimalistic Area Card  %c ${pkgVersion} `,
     'color: orange; font-weight: bold; background: black',
     'color: white; font-weight: bold; background: dimgray',
 );
@@ -65,12 +66,12 @@ class MinimalisticAreaCard extends LitElement {
     private areaEntities?: string[];
 
     override async performUpdate() {
-        await this.setArea();
+        this.setArea();
         this.setEntities();
         await super.performUpdate();
     }
 
-    async setArea() {
+    setArea() {
         if (this.hass?.connected) {
             if (this.config && this.config.area) {
                 const area = this.hass.areas[this.config.area];
@@ -217,15 +218,17 @@ class MinimalisticAreaCard extends LitElement {
     }
 
     renderEntity(
-        entityConf,
-        dialog,
-        isSensor
+        entityConf: EntityConfig,
+        dialog: boolean,
+        isSensor: boolean
     ) {
         const stateObj = this.hass.states[entityConf.entity];
+
 
         entityConf = {
             tap_action: { action: dialog ? "more-info" : "toggle" },
             hold_action: { action: "more-info" },
+            show_state: entityConf.show_state === undefined ? true : !!entityConf.show_state,
             ...entityConf,
         };
 
@@ -253,7 +256,7 @@ class MinimalisticAreaCard extends LitElement {
         })}>
             <ha-state-icon .icon=${entityConf.icon} .state=${stateObj}></ha-state-icon>
         </ha-icon-button>
-        ${isSensor ? html`
+        ${isSensor && entityConf.show_state ? html`
         <div class="state">
             ${entityConf.attribute
                     ? html`
@@ -462,12 +465,12 @@ class MinimalisticAreaCard extends LitElement {
       }
 
       .box .sensors {
-          white-space: nowrap;
           margin-top: -19px;
           margin-bottom: -18px;
           min-height: 10px;
           margin-left: 5px;
           font-size: 0.9em;
+          line-height: 13px;
       }
 
       .box .buttons {
