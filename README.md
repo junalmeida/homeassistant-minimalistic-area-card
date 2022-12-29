@@ -24,7 +24,8 @@ For `tap_action` options, see https://www.home-assistant.io/dashboards/actions/.
   area: living_room # area id of an existing area defined in HA. (optional)
   background_color: yellow # a color name, rgb hex or rgba function when an image is not provided (optional)
   camera_image: camera.living_room # a camera entity to use as background (optional)
-  camera_view: "auto" # auto, live (optional)
+  camera_view: 'auto' # auto, live (optional)
+  shadow: true # Draws a drop shadow on icons (optional)
   tap_action:
     action: navigate
     navigation_path: /lovelace/living-room

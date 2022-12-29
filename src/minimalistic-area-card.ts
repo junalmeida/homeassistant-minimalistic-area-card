@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-    ActionHandlerEvent,
-    EntitiesCardEntityConfig,
+    ActionHandlerEvent, computeStateDisplay, EntitiesCardEntityConfig,
     handleAction, hasAction, hasConfigOrEntityChanged, HomeAssistant, NavigateActionConfig
 } from 'custom-card-helpers'; // This is a community maintained npm module with common helper functions/types. https://github.com/custom-cards/custom-card-helpers
 import { css, html, LitElement } from 'lit';
@@ -9,9 +8,10 @@ import { classMap } from 'lit/directives/class-map';
 import { ifDefined } from "lit/directives/if-defined";
 import { actionHandler } from './action-handler-directive';
 import { findEntities } from './find-entities';
-import { cardType, HomeAssistantArea, MinimalisticAreaCardConfig } from './types';
+import { cardType, HomeAssistantArea, MinimalisticAreaCardConfig, STATES_OFF } from './types';
 
 import { version as pkgVersion } from "../package.json";
+
 
 /* eslint no-console: 0 */
 console.info(
@@ -25,7 +25,7 @@ const SENSORS = [
     "sensor",
     "binary_sensor"
 ];
-const STATES_OFF = ["closed", "locked", "off"];
+
 const DOMAINS_TOGGLE = [
     "fan",
     "input_boolean",
@@ -241,7 +241,11 @@ class MinimalisticAreaCard extends LitElement {
         if (!stateObj && !this.config.hide_unavailable) {
             return html`
             <div class="wrapper">
-                <hui-warning-element .label=${createEntityNotFoundWarning(this.hass, entityConf.entity)}></hui-warning-element>
+                <hui-warning-element
+                    .label=${createEntityNotFoundWarning(this.hass, entityConf.entity)}             
+                    class=${classMap({
+                "shadow": this.config.shadow === undefined ? true : this.config.shadow,
+            })}></hui-warning-element>
             </div>
       `;
         }
@@ -249,6 +253,8 @@ class MinimalisticAreaCard extends LitElement {
             return html``;
         }
 
+        const active = stateObj && stateObj.state && STATES_OFF.indexOf(stateObj.state.toString().toLowerCase()) === -1;
+        const title = computeStateDisplay(this.hass?.localize, stateObj, this.hass?.locale);
 
         return html`
     <div class="wrapper">
@@ -257,10 +263,18 @@ class MinimalisticAreaCard extends LitElement {
                 hasAction(entityConf.hold_action), hasDoubleClick: hasAction(entityConf.double_tap_action),
         })}
             .config=${entityConf} class=${classMap({
-            "state-on": stateObj.state && [...STATES_OFF, "unavailable", "idle"
-                , "disconnected"].indexOf(stateObj.state.toString().toLowerCase()) === -1,
+            "state-on": active,
         })}>
-            <ha-state-icon .icon=${entityConf.icon} .state=${stateObj}></ha-state-icon>
+            <state-badge
+            .stateObj=${stateObj}
+            .title=${title}
+            .overrideIcon=${entityConf.icon}
+            .stateColor=${entityConf.state_color}
+            class=${classMap({
+            "shadow": this.config.shadow === undefined ? true : this.config.shadow,
+        })}
+        ></state-badge>
+           <!-- <ha-state-icon .icon=${entityConf.icon} .state=${stateObj}></ha-state-icon> -->
         </ha-icon-button>
         ${isSensor && entityConf.show_state ? html`
         <div class="state">
@@ -471,8 +485,8 @@ class MinimalisticAreaCard extends LitElement {
       }
 
       .box .sensors {
-          margin-top: -19px;
-          margin-bottom: -18px;
+          margin-top: -8px;
+          margin-bottom: -8px;
           min-height: 10px;
           margin-left: 5px;
           font-size: 0.9em;
@@ -495,25 +509,28 @@ class MinimalisticAreaCard extends LitElement {
       .box .buttons ha-icon-button {
             margin-left: -8px;
             margin-right: -6px;
-            margin-bottom: -12px;
       }
       .box .sensors ha-icon-button {
             -moz-transform: scale(0.67);
             zoom: 0.67;
             vertical-align: middle;
-            margin-bottom: -12px;
       }
+    
       .box .wrapper {
           display: inline-block;
           vertical-align: middle;
+          margin-bottom: -8px;
       }
-      .box ha-icon-button {
+      .box ha-icon-button state-badge {
+          line-height: 0px;
           color: var(--ha-picture-icon-button-color, #a9a9a9);
       }
-      .box ha-icon-button.state-on {
+      .box ha-icon-button state-badge.shadow {
+          filter: drop-shadow(2px 2px 2px gray);
+      }
+      .box ha-icon-button.state-on state-badge {
           color: var(--ha-picture-icon-button-on-color, white);
       }
-
 
       .box .sensors .wrapper > * {
           display: inline-block;
@@ -521,11 +538,13 @@ class MinimalisticAreaCard extends LitElement {
       }
       .box .sensors .state {
           margin-left: -9px;
-          padding-top: 14px;
       }
 
       .box .wrapper hui-warning-element {
-          margin-top: 15px;
+          display: block;
+      }
+      .box .wrapper hui-warning-element.shadow {
+          filter: drop-shadow(2px 2px 2px gray);
       }
     `;
     }
@@ -541,3 +560,4 @@ theWindow.customCards.push({
     preview: true, // Optional - defaults to false
     description: "Minimalistic Area Card" // Optional
 });
+
