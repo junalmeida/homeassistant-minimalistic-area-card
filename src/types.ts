@@ -12,6 +12,8 @@ export interface MinimalisticAreaCardConfig extends LovelaceCardConfig {
   title?: string;
   image?: string;
   area?: string;
+  camera_image?: string;
+  camera_view?: "auto" | "live";
   background_color?: string;
   hide_unavailable?: boolean;
   entities?: Array<EntityConfig | string>;
