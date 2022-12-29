@@ -1,4 +1,4 @@
-import { ActionConfig, LovelaceCard, LovelaceCardConfig, LovelaceCardEditor } from 'custom-card-helpers';
+import { ActionConfig, EntityConfig, LovelaceCard, LovelaceCardConfig, LovelaceCardEditor } from 'custom-card-helpers';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -26,9 +26,6 @@ export interface HomeAssistantArea {
   area_id: string,
   picture: string,
   name: string
-}
-export interface EntityConfig {
-  entity: string;
 }
 
 export const cardType = "minimalistic-area-card";
