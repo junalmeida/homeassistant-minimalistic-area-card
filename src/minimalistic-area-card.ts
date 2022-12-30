@@ -254,7 +254,7 @@ class MinimalisticAreaCard extends LitElement {
         }
 
         const active = stateObj && stateObj.state && STATES_OFF.indexOf(stateObj.state.toString().toLowerCase()) === -1;
-        const title = computeStateDisplay(this.hass?.localize, stateObj, this.hass?.locale);
+        const title = `${stateObj.attributes?.friendly_name || stateObj.entity_id}: ${computeStateDisplay(this.hass?.localize, stateObj, this.hass?.locale)}`;
 
         return html`
     <div class="wrapper">
