@@ -8,7 +8,7 @@ import { classMap } from 'lit/directives/class-map';
 import { ifDefined } from "lit/directives/if-defined";
 import { actionHandler } from './action-handler-directive';
 import { findEntities } from './find-entities';
-import { cardType, HomeAssistantArea, MinimalisticAreaCardConfig, STATES_OFF } from './types';
+import { cardType, HomeAssistantArea, MinimalisticAreaCardConfig, STATES_OFF, UNAVAILABLE } from './types';
 
 import { version as pkgVersion } from "../package.json";
 
@@ -238,7 +238,7 @@ class MinimalisticAreaCard extends LitElement {
             ...entityConf,
         };
 
-        if (!stateObj && !this.config.hide_unavailable) {
+        if ((!stateObj || stateObj.state === UNAVAILABLE) && !this.config.hide_unavailable) {
             return html`
             <div class="wrapper">
                 <hui-warning-element
@@ -249,7 +249,7 @@ class MinimalisticAreaCard extends LitElement {
             </div>
       `;
         }
-        else if (!stateObj && this.config.hide_unavailable) {
+        else if ((!stateObj || stateObj.state === UNAVAILABLE) && this.config.hide_unavailable) {
             return html``;
         }
 
@@ -487,7 +487,7 @@ class MinimalisticAreaCard extends LitElement {
       .box .sensors {
           margin-top: -8px;
           margin-bottom: -8px;
-          min-height: 10px;
+          min-height: var(--minimalistic-area-card-sensors-min-height, 10px);
           margin-left: 5px;
           font-size: 0.9em;
           line-height: 13px;

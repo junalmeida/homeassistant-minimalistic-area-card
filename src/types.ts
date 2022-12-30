@@ -1,5 +1,5 @@
 import { ActionConfig, EntityConfig, LovelaceCard, LovelaceCardConfig, LovelaceCardEditor, STATES_OFF as STATES_OFF_HELPER } from 'custom-card-helpers';
-
+import { name } from "../package.json";
 declare global {
   interface HTMLElementTagNameMap {
     'minimalistic-area-card-editor': LovelaceCardEditor;
@@ -29,6 +29,7 @@ export interface HomeAssistantArea {
   name: string
 }
 
-export const STATES_OFF = [...STATES_OFF_HELPER, "unavailable", "idle"
+export const UNAVAILABLE = "unavailable";
+export const STATES_OFF = [...STATES_OFF_HELPER, UNAVAILABLE, "idle"
   , "disconnected"];
-export const cardType = "minimalistic-area-card";
+export const cardType = name;
