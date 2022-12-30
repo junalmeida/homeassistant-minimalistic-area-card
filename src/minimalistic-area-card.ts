@@ -440,7 +440,7 @@ class MinimalisticAreaCard extends LitElement {
           position: absolute;
           z-index: -1;
           pointer-events: none;
-          border-radius: var(--ha-card-border-radius)
+          border-radius: var(--ha-card-border-radius, 12px)
       }
 
       div.camera {
@@ -453,7 +453,7 @@ class MinimalisticAreaCard extends LitElement {
           
           z-index: -1;
           pointer-events: none;
-          border-radius: var(--ha-card-border-radius);
+          border-radius: var(--ha-card-border-radius, 12px);
       }
 
       div.camera hui-image {
