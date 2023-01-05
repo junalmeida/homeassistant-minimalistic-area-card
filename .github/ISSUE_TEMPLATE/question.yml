@@ -23,7 +23,7 @@ body:
     attributes:
       label: Card Version
       description: What is the card version you are running?
-      value: "x.x.x.x"
+      placeholder: "x.x.x.x"
     validations:
       required: true
 
