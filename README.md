@@ -26,6 +26,7 @@ For `tap_action` options, see https://www.home-assistant.io/dashboards/actions/.
   camera_image: camera.living_room # a camera entity to use as background (optional)
   camera_view: 'auto' # auto, live (optional)
   shadow: true # Draws a drop shadow on icons (optional)
+  hide_unavailable: false # Hide unavailable entities (optional)
   tap_action:
     action: navigate
     navigation_path: /lovelace/living-room
