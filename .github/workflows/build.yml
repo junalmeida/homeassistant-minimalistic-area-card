@@ -14,7 +14,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'yarn'
+      - name: Install
+        run: yarn install --frozen-lockfile
       - name: Build
-        run: |
-          npm install
-          npm run build
+        run: yarn build
