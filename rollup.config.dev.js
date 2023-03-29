@@ -11,6 +11,7 @@ import { ignoreSwitchFiles } from './elements/ignore/switch';
 
 export default {
   input: ['src/minimalistic-area-card.ts'],
+  strictDeprecations: true,
   output: {
     dir: './dist',
     format: 'es',

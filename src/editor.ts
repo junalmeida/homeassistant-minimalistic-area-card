@@ -1,20 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { LitElement, html, TemplateResult, css, CSSResultGroup } from 'lit';
-import { HomeAssistant, fireEvent, LovelaceCardEditor } from 'custom-card-helpers';
+import { fireEvent, HomeAssistant, LovelaceCardEditor } from 'custom-card-helpers';
+import { css, CSSResultGroup, html, LitElement, TemplateResult } from 'lit';
 
 import { ScopedRegistryHost } from '@lit-labs/scoped-registry-mixin';
-import { BoilerplateCardConfig } from './types';
 import { customElement, property, state } from 'lit/decorators';
 import { formfieldDefinition } from '../elements/formfield';
 import { selectDefinition } from '../elements/select';
 import { switchDefinition } from '../elements/switch';
 import { textfieldDefinition } from '../elements/textfield';
+import { MinimalisticAreaCardConfig } from './types';
 
 @customElement('boilerplate-card-editor')
 export class BoilerplateCardEditor extends ScopedRegistryHost(LitElement) implements LovelaceCardEditor {
   @property({ attribute: false }) public hass?: HomeAssistant;
 
-  @state() private _config?: BoilerplateCardConfig;
+  @state() private _config?: MinimalisticAreaCardConfig;
 
   @state() private _helpers?: any;
 
@@ -27,7 +27,7 @@ export class BoilerplateCardEditor extends ScopedRegistryHost(LitElement) implem
     ...formfieldDefinition,
   };
 
-  public setConfig(config: BoilerplateCardConfig): void {
+  public setConfig(config: MinimalisticAreaCardConfig): void {
     this._config = config;
 
     this.loadCardHelpers();
@@ -76,8 +76,8 @@ export class BoilerplateCardEditor extends ScopedRegistryHost(LitElement) implem
         @closed=${(ev) => ev.stopPropagation()}
       >
         ${entities.map((entity) => {
-          return html`<mwc-list-item .value=${entity}>${entity}</mwc-list-item>`;
-        })}
+      return html`<mwc-list-item .value=${entity}>${entity}</mwc-list-item>`;
+    })}
       </mwc-select>
       <mwc-textfield
         label="Name (Optional)"

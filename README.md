@@ -27,13 +27,17 @@ For `tap_action` options, see https://www.home-assistant.io/dashboards/actions/.
   camera_view: 'auto' # auto, live (optional)
   shadow: true # Draws a drop shadow on icons (optional)
   hide_unavailable: false # Hide unavailable entities (optional)
+  state_color: true # enable or disable HA colors for all entities
   tap_action:
     action: navigate
     navigation_path: /lovelace/living-room
   entities: #optional, lists area entities automatically if ommited.
     - entity: media_player.living_room_tv
+      state_color: false # enable or disable HA colors for this entity
     - entity: switch.fireplace_on_off
     - entity: cover.window_covering
+      tap_action:
+        action: toggle
     - entity: media_player.speaker
     - entity: light.living_room_lamp
     - entity: sensor.hallway_humidity
