@@ -10,12 +10,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'yarn'
 
-      # Build
-      - name: Build the file
-        run: |
-          npm install
-          npm run build
+      - name: Install
+        run: yarn install --frozen-lockfile
+
+      - name: Build
+        run: yarn build
 
       # Upload build file to the release as an asset.
       - name: Upload zip to release
