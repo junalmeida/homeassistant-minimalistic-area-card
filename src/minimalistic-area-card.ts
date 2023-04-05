@@ -174,7 +174,7 @@ class MinimalisticAreaCard extends LitElement {
         if (!this.config || !this.hass) {
             return html``;
         }
-        const color = this.config.background_color ? `background-color: ${this.config.background_color}` : "";
+        const background_color = this.config.background_color ? `background-color: ${this.config.background_color}` : "";
         let imageUrl: string | undefined = undefined;
         if (!this.config.camera_image && (this.config.image || this.area?.picture)) {
             imageUrl = (new URL(this.config.image || this.area?.picture || "", this.hass.auth.data.hassUrl)).toString();
@@ -182,29 +182,31 @@ class MinimalisticAreaCard extends LitElement {
 
 
         return html`
-        <ha-card @action=${this._handleThisAction} style=xxxxxxxx .actionHandler=${actionHandler({ hasHold:
-            hasAction(this.config.hold_action), hasDoubleClick: hasAction(this.config.double_tap_action), })}
+        <ha-card @action=${this._handleThisAction} style={background_color} .actionHandler=${actionHandler({
+            hasHold:
+                hasAction(this.config.hold_action), hasDoubleClick: hasAction(this.config.double_tap_action),
+        })}
             tabindex=${ifDefined(hasAction(this.config.tap_action) ? "0" : undefined)}>
             ${imageUrl ? html`<img src=${imageUrl} />` : null}
             ${this.config.camera_image ? html`<div class="camera">
                 <hui-image .hass=${this.hass} .cameraImage=${this.config.camera_image} .entity=${this.config.camera_image}
-                    .cameraView=${this.config.camera_view || "auto" } .width="100%"></hui-image>
+                    .cameraView=${this.config.camera_view || "auto"} .width="100%"></hui-image>
             </div>` : null}
         
             <div class="box">
                 <div class="card-header">${this.config.title}</div>
                 <div class="sensors">
                     ${this._entitiesSensor.map((entityConf) =>
-                    this.renderEntity(entityConf, true, true)
-                    )}
+            this.renderEntity(entityConf, true, true)
+        )}
                 </div>
                 <div class="buttons">
                     ${this._entitiesDialog.map((entityConf) =>
-                    this.renderEntity(entityConf, true, false)
-                    )}
+            this.renderEntity(entityConf, true, false)
+        )}
                     ${this._entitiesToggle.map((entityConf) =>
-                    this.renderEntity(entityConf, false, false)
-                    )}
+            this.renderEntity(entityConf, false, false)
+        )}
                 </div>
             </div>
         </ha-card>
@@ -228,8 +230,10 @@ class MinimalisticAreaCard extends LitElement {
         if ((!stateObj || stateObj.state === UNAVAILABLE) && !this.config.hide_unavailable) {
             return html`
             <div class="wrapper">
-                <hui-warning-element .label=${createEntityNotFoundWarning(this.hass, entityConf.entity)} class=${classMap({ "shadow"
-                    : this.config.shadow===undefined ? true : this.config.shadow, })}></hui-warning-element>
+                <hui-warning-element .label=${createEntityNotFoundWarning(this.hass, entityConf.entity)} class=${classMap({
+                "shadow"
+                    : this.config.shadow === undefined ? true : this.config.shadow,
+            })}></hui-warning-element>
             </div>
       `;
         }
@@ -242,23 +246,27 @@ class MinimalisticAreaCard extends LitElement {
 
         return html`
     <div class="wrapper">
-        <ha-icon-button @action=${this._handleEntityAction} .actionHandler=${actionHandler({ hasHold:
-            hasAction(entityConf.hold_action), hasDoubleClick: hasAction(entityConf.double_tap_action), })}
-            .config=${entityConf} class=${classMap({ "state-on" : active, })}>
+        <ha-icon-button @action=${this._handleEntityAction} .actionHandler=${actionHandler({
+            hasHold:
+                hasAction(entityConf.hold_action), hasDoubleClick: hasAction(entityConf.double_tap_action),
+        })}
+            .config=${entityConf} class=${classMap({ "state-on": active, })}>
             <state-badge .hass=${this.hass} .stateObj=${stateObj} .title=${title} .overrideIcon=${entityConf.icon}
                 .stateColor=${entityConf.state_color !== undefined ? entityConf.state_color : this.config.state_color
-                !==undefined ? this.config.state_color : true} class=${classMap({ "shadow" : this.config.shadow===undefined
-                ? true : this.config.shadow, })}></state-badge>
+                !== undefined ? this.config.state_color : true} class=${classMap({
+                    "shadow": this.config.shadow === undefined
+                        ? true : this.config.shadow,
+                })}></state-badge>
         </ha-icon-button>
         ${isSensor && entityConf.show_state ? html`
         <div class="state">
             ${entityConf.attribute
-            ? html`
+                    ? html`
             ${entityConf.prefix}${stateObj.attributes[
-            entityConf.attribute
-            ]}${entityConf.suffix}
+                        entityConf.attribute
+                        ]}${entityConf.suffix}
             `
-            : this.computeStateValue(stateObj)}
+                    : this.computeStateValue(stateObj)}
         </div>
         ` : null}
     </div>
