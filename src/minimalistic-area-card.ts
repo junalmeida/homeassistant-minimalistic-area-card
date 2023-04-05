@@ -182,7 +182,7 @@ class MinimalisticAreaCard extends LitElement {
 
 
         return html`
-        <ha-card @action=${this._handleThisAction} style={background_color} .actionHandler=${actionHandler({
+        <ha-card @action=${this._handleThisAction} style=${background_color} .actionHandler=${actionHandler({
             hasHold:
                 hasAction(this.config.hold_action), hasDoubleClick: hasAction(this.config.double_tap_action),
         })}
