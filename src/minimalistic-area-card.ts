@@ -260,7 +260,7 @@ class MinimalisticAreaCard extends LitElement {
                 .stateColor=${entityConf.state_color !== undefined ? entityConf.state_color : this.config.state_color
                 !== undefined ? this.config.state_color : true} class=${classMap({
                     "shadow": this.config.shadow === undefined
-                        ? true : this.config.shadow,
+                        ? false : this.config.shadow,
                 })}></state-badge>
         </ha-icon-button>
         ${isSensor && entityConf.show_state ? html`
