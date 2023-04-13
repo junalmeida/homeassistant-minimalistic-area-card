@@ -22,6 +22,7 @@ export interface MinimalisticAreaCardConfig extends LovelaceCardConfig {
   double_tap_action?: ActionConfig;
   shadow?: boolean;
   state_color?: boolean;
+  darken_image?: boolean;
 }
 
 export interface HomeAssistantArea {
