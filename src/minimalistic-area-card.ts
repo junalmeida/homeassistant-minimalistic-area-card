@@ -191,7 +191,8 @@ class MinimalisticAreaCard extends LitElement {
             "darken"
                 : this.config.darken_image === undefined ? false : this.config.darken_image,
         })} />` : null}
-            ${this.config.camera_image ? html`<div class="camera" class=${classMap({
+            ${this.config.camera_image ? html`<div class=${classMap({
+            "camera": true,
             "darken"
                 : this.config.darken_image === undefined ? false : this.config.darken_image,
         })}>
