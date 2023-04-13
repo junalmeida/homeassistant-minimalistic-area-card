@@ -334,6 +334,7 @@ class MinimalisticAreaCard extends LitElement {
             Object.keys(hass.entities)
                 .filter((e) =>
                     !hass.entities[e].disabled_by &&
+                    !hass.entities[e].hidden &&
                     hass.entities[e].entity_category !== "diagnostic" &&
                     hass.entities[e].entity_category !== "config" && (
                         hass.entities[e].area_id === area.area_id ||
