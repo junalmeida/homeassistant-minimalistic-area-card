@@ -187,26 +187,30 @@ class MinimalisticAreaCard extends LitElement {
                 hasAction(this.config.hold_action), hasDoubleClick: hasAction(this.config.double_tap_action),
         })}
             tabindex=${ifDefined(hasAction(this.config.tap_action) ? "0" : undefined)}>
-            ${imageUrl ? html`<img src=${imageUrl} />` : null}
-            ${this.config.camera_image ? html`<div class="camera">
-                <hui-image .hass=${this.hass} .cameraImage=${this.config.camera_image} .entity=${this.config.camera_image}
-                    .cameraView=${this.config.camera_view || "auto"} .width="100%"></hui-image>
+            ${imageUrl ? html`<img src=${imageUrl} class=${classMap({
+            "darken"
+                : this.config.darken_image === undefined ? false : this.config.darken_image,
+        })} />` : null}
+            ${this.config.camera_image ? html`<div class="camera" class=${classMap({
+            "darken"
+                : this.config.darken_image === undefined ? false : this.config.darken_image,
+        })}>
+                <hui-image
+                    .hass=${this.hass} 
+                    .cameraImage=${this.config.camera_image} 
+                    .entity=${this.config.camera_image}
+                    .cameraView=${this.config.camera_view || "auto"} 
+                    .width="100%"></hui-image>
             </div>` : null}
         
             <div class="box">
                 <div class="card-header">${this.config.title}</div>
                 <div class="sensors">
-                    ${this._entitiesSensor.map((entityConf) =>
-            this.renderEntity(entityConf, true, true)
-        )}
+                    ${this._entitiesSensor.map((entityConf) => this.renderEntity(entityConf, true, true))}
                 </div>
                 <div class="buttons">
-                    ${this._entitiesDialog.map((entityConf) =>
-            this.renderEntity(entityConf, true, false)
-        )}
-                    ${this._entitiesToggle.map((entityConf) =>
-            this.renderEntity(entityConf, false, false)
-        )}
+                    ${this._entitiesDialog.map((entityConf) => this.renderEntity(entityConf, true, false))}
+                    ${this._entitiesToggle.map((entityConf) => this.renderEntity(entityConf, false, false))}
                 </div>
             </div>
         </ha-card>
@@ -232,7 +236,7 @@ class MinimalisticAreaCard extends LitElement {
             <div class="wrapper">
                 <hui-warning-element .label=${createEntityNotFoundWarning(this.hass, entityConf.entity)} class=${classMap({
                 "shadow"
-                    : this.config.shadow === undefined ? true : this.config.shadow,
+                    : this.config.shadow === undefined ? false : this.config.shadow,
             })}></hui-warning-element>
             </div>
       `;
@@ -415,14 +419,17 @@ class MinimalisticAreaCard extends LitElement {
           display: block;
           height: 100%;
           width: 100%;
-
-          filter: brightness(0.55);
+          
           object-fit: cover;
 
           position: absolute;
           z-index: -1;
           pointer-events: none;
           border-radius: var(--ha-card-border-radius, 12px)
+      }
+
+      .darken {
+        filter: brightness(0.55);
       }
 
       div.camera {
