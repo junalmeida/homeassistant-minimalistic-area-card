@@ -112,7 +112,7 @@ class MinimalisticAreaCard extends LitElement {
 
             const entity = this.parseEntity(item);
             const [domain, _] = entity.entity.split('.');
-            if (SENSORS.indexOf(domain) !== -1) {
+            if (SENSORS.indexOf(domain) !== -1 || entity.attribute) {
                 this._entitiesSensor.push(entity);
             }
             else if (
@@ -267,9 +267,9 @@ class MinimalisticAreaCard extends LitElement {
         <div class="state">
             ${entityConf.attribute
                     ? html`
-            ${entityConf.prefix}${stateObj.attributes[
-                        entityConf.attribute
-                        ]}${entityConf.suffix}
+            ${entityConf.prefix}
+            ${stateObj.attributes[entityConf.attribute]}
+            ${entityConf.suffix}
             `
                     : this.computeStateValue(stateObj)}
         </div>
