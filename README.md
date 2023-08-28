@@ -28,6 +28,7 @@ For `tap_action` options, see https://www.home-assistant.io/dashboards/actions/.
   shadow: true # Draws a drop shadow on icons (optional)
   hide_unavailable: false # Hide unavailable entities (optional)
   state_color: true # enable or disable HA colors for all entities
+  darken_image: true # reduce brightness of the background image to constrast with entities
   tap_action:
     action: navigate
     navigation_path: /lovelace/living-room
@@ -35,7 +36,6 @@ For `tap_action` options, see https://www.home-assistant.io/dashboards/actions/.
     - entity: media_player.living_room_tv
       state_color: false # enable or disable HA colors for this entity
       shadow: true # enable a drop shadow on entity icons to contrast with the background
-      darken_image: true # reduce brightness of the background image to constrast with entities
     - entity: switch.fireplace_on_off
     - entity: cover.window_covering
       tap_action:
