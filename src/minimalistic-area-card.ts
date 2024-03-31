@@ -175,6 +175,10 @@ class MinimalisticAreaCard extends LitElement {
             return html``;
         }
         const background_color = this.config.background_color ? `background-color: ${this.config.background_color}` : "";
+        const font_color = this.config.font_color ? `color: ${this.config.font_color}` : "";
+        const icon_color = this.config.icon_color ? `color: ${this.config.icon_color}` : "";
+        const image_position = this.config.image_position ? `background-position: ${this.config.image_position}` : "";
+
         let imageUrl: string | undefined = undefined;
         if (!this.config.camera_image && (this.config.image || this.area?.picture)) {
             imageUrl = (new URL(this.config.image || this.area?.picture || "", this.hass.auth.data.hassUrl)).toString();
@@ -187,7 +191,7 @@ class MinimalisticAreaCard extends LitElement {
                 hasAction(this.config.hold_action), hasDoubleClick: hasAction(this.config.double_tap_action),
         })}
             tabindex=${ifDefined(hasAction(this.config.tap_action) ? "0" : undefined)}>
-            ${imageUrl ? html`<img src=${imageUrl} class=${classMap({
+            ${imageUrl ? html`<img src=${imageUrl} style=${image_position} class=${classMap({
             "darken"
                 : this.config.darken_image === undefined ? false : this.config.darken_image,
         })} />` : null}
@@ -205,8 +209,8 @@ class MinimalisticAreaCard extends LitElement {
             </div>` : null}
         
             <div class="box">
-                <div class="card-header">${this.config.title}</div>
-                <div class="sensors">
+                <div class="card-header" style=${font_color} >${this.config.title}</div>
+                <div class="sensors" style=${icon_color} >
                     ${this._entitiesSensor.map((entityConf) => this.renderEntity(entityConf, true, true))}
                 </div>
                 <div class="buttons">
