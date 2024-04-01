@@ -175,8 +175,8 @@ class MinimalisticAreaCard extends LitElement {
             return html``;
         }
         const background_color = this.config.background_color ? `background-color: ${this.config.background_color}` : "";
-        const title_font_color = this.config.font_color ? `color: ${this.config.font_color}` : "";
-        const sensors_font_color = this.config.icon_color ? `color: ${this.config.icon_color}` : "#FFFFFF";
+        const title_font_color = this.config.title_font_color ? `color: ${this.config.title_font_color}` : "";
+        const sensors_font_color = this.config.sensors_font_color ? `color: ${this.config.sensors_font_color}` : "#FFFFFF";
         const image_position = this.config.image_position ? `object-position: ${this.config.image_position}` : "";
 
         let imageUrl: string | undefined = undefined;
