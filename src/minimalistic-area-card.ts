@@ -175,8 +175,8 @@ class MinimalisticAreaCard extends LitElement {
             return html``;
         }
         const background_color = this.config.background_color ? `background-color: ${this.config.background_color}` : "";
-        const font_color = this.config.font_color ? `color: ${this.config.font_color}` : "";
-        const icon_color = this.config.icon_color ? `color: ${this.config.icon_color}` : "#FFFFFF";
+        const title_font_color = this.config.font_color ? `color: ${this.config.font_color}` : "";
+        const sensors_font_color = this.config.icon_color ? `color: ${this.config.icon_color}` : "#FFFFFF";
         const image_position = this.config.image_position ? `object-position: ${this.config.image_position}` : "";
 
         let imageUrl: string | undefined = undefined;
@@ -209,8 +209,8 @@ class MinimalisticAreaCard extends LitElement {
             </div>` : null}
         
             <div class="box">
-                <div class="card-header" style=${font_color} >${this.config.title}</div>
-                <div class="sensors" style=${icon_color} >
+                <div class="card-header" style=${title_font_color} >${this.config.title}</div>
+                <div class="sensors" style=${sensors_font_color} >
                     ${this._entitiesSensor.map((entityConf) => this.renderEntity(entityConf, true, true))}
                 </div>
                 <div class="buttons">
