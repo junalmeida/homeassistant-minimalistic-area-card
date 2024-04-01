@@ -12,5 +12,8 @@
         "**/.factorypath": true,
         "**/node_modules": true
     },
-    "explorerExclude.backup": null
+    "explorerExclude.backup": null,
+    "files.associations": {
+        "*.yaml": "home-assistant"
+    }
 }
