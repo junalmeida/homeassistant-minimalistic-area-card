@@ -1,14 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
     ActionHandlerEvent, computeStateDisplay, EntitiesCardEntityConfig,
-    handleAction, hasAction, hasConfigOrEntityChanged, NavigateActionConfig
+    FrontendLocaleData,
+    handleAction, hasAction, hasConfigOrEntityChanged, NavigateActionConfig,
+    NumberFormat,
+    numberFormatToLocale,
+    round
 } from 'custom-card-helpers'; // This is a community maintained npm module with common helper functions/types. https://github.com/custom-cards/custom-card-helpers
 import { css, html, LitElement } from 'lit';
 import { classMap } from 'lit/directives/class-map';
 import { ifDefined } from "lit/directives/if-defined";
 import { actionHandler } from './action-handler-directive';
 import { findEntities } from './find-entities';
-import { cardType, HomeAssistantArea, HomeAssistantExt, MinimalisticAreaCardConfig, STATES_OFF, UNAVAILABLE } from './types';
+import { cardType, EntityRegistryDisplayEntry, HomeAssistantArea, HomeAssistantExt, MinimalisticAreaCardConfig, STATES_OFF, UNAVAILABLE } from './types';
 
 import { HassEntity } from 'home-assistant-js-websocket';
 import { version as pkgVersion } from "../package.json";
@@ -224,6 +228,7 @@ class MinimalisticAreaCard extends LitElement {
         isSensor: boolean
     ) {
         const stateObj = this.hass.states[entityConf.entity];
+        const entity = this.hass.entities[entityConf.entity] as EntityRegistryDisplayEntry;
 
         entityConf = {
             tap_action: { action: dialog ? "more-info" : "toggle" },
@@ -271,7 +276,7 @@ class MinimalisticAreaCard extends LitElement {
             ${stateObj.attributes[entityConf.attribute]}
             ${entityConf.suffix}
             `
-                    : this.computeStateValue(stateObj)}
+                    : this.computeStateValue(stateObj, entity)}
         </div>
         ` : null}
     </div>
@@ -283,16 +288,19 @@ class MinimalisticAreaCard extends LitElement {
             !!stateObj.attributes.state_class;
     }
 
-    computeStateValue(stateObj: HassEntity) {
+    computeStateValue(stateObj: HassEntity, entity?: EntityRegistryDisplayEntry) {
         const [domain, _] = stateObj.entity_id.split(".");
         if (this.isNumericState(stateObj)) {
             const value = Number(stateObj.state);
             if (isNaN(value))
                 return null;
-            else
-                return `${value}${stateObj.attributes.unit_of_measurement
+            else {
+                const opt = this.getNumberFormatOptions(stateObj, entity);
+                const str = this.formatNumber(value, this.hass.locale, opt);
+                return `${str}${stateObj.attributes.unit_of_measurement
                     ? " " + stateObj.attributes.unit_of_measurement
                     : ""}`;
+            }
         }
         else if (domain !== "binary_sensor" && stateObj.state !== "unavailable" && stateObj.state !== "idle") {
             return stateObj.state;
@@ -300,6 +308,105 @@ class MinimalisticAreaCard extends LitElement {
         else {
             return null;
         }
+    }
+
+    /**
+ * Checks if the current entity state should be formatted as an integer based on the `state` and `step` attribute and returns the appropriate `Intl.NumberFormatOptions` object with `maximumFractionDigits` set
+ * @param entityState The state object of the entity
+ * @returns An `Intl.NumberFormatOptions` object with `maximumFractionDigits` set to 0, or `undefined`
+ */
+    getNumberFormatOptions(
+        entityState: HassEntity,
+        entity?: EntityRegistryDisplayEntry
+    ): Intl.NumberFormatOptions | undefined {
+        const precision = entity?.display_precision;
+        if (precision != null) {
+            return {
+                maximumFractionDigits: precision,
+                minimumFractionDigits: precision,
+            };
+        }
+        if (
+            Number.isInteger(Number(entityState.attributes?.step)) &&
+            Number.isInteger(Number(entityState.state))
+        ) {
+            return { maximumFractionDigits: 0 };
+        }
+        return undefined;
+    }
+
+
+    /**
+     * Formats a number based on the user's preference with thousands separator(s) and decimal character for better legibility.
+     *
+     * @param num The number to format
+     * @param localeOptions The user-selected language and formatting, from `hass.locale`
+     * @param options Intl.NumberFormatOptions to use
+     */
+    formatNumber(
+        num: string | number,
+        localeOptions?: FrontendLocaleData,
+        options?: Intl.NumberFormatOptions
+    ): string {
+        const locale = localeOptions ? numberFormatToLocale(localeOptions) : undefined;
+
+        // Polyfill for Number.isNaN, which is more reliable than the global isNaN()
+        Number.isNaN =
+            Number.isNaN ||
+            function isNaN(input) {
+                return typeof input === "number" && isNaN(input);
+            };
+
+        if (localeOptions?.number_format !== NumberFormat.none && !Number.isNaN(Number(num)) && Intl) {
+            try {
+                return new Intl.NumberFormat(locale, this.getDefaultFormatOptions(num, options)).format(
+                    Number(num)
+                );
+            } catch (err: any) {
+                // Don't fail when using "TEST" language
+                // eslint-disable-next-line no-console
+                console.error(err);
+                return new Intl.NumberFormat(undefined, this.getDefaultFormatOptions(num, options)).format(
+                    Number(num)
+                );
+            }
+        }
+        if (typeof num === "string") {
+            return num;
+        }
+        return `${round(num, options?.maximumFractionDigits).toString()}${options?.style === "currency" ? ` ${options.currency}` : ""
+            }`;
+    }
+
+    /**
+ * Generates default options for Intl.NumberFormat
+ * @param num The number to be formatted
+ * @param options The Intl.NumberFormatOptions that should be included in the returned options
+ */
+    getDefaultFormatOptions(
+        num: string | number,
+        options?: Intl.NumberFormatOptions
+    ): Intl.NumberFormatOptions {
+        const defaultOptions: Intl.NumberFormatOptions = {
+            maximumFractionDigits: 2,
+            ...options,
+        };
+
+        if (typeof num !== "string") {
+            return defaultOptions;
+        }
+
+        // Keep decimal trailing zeros if they are present in a string numeric value
+        if (
+            !options ||
+            (options.minimumFractionDigits === undefined && options.maximumFractionDigits === undefined)
+        ) {
+            const digits = num.indexOf(".") > -1 ? num.split(".")[1].length : 0;
+            defaultOptions.minimumFractionDigits = digits;
+            defaultOptions.maximumFractionDigits = digits;
+        }
+
+        return defaultOptions;
     }
 
     shouldUpdate(changedProps) {
