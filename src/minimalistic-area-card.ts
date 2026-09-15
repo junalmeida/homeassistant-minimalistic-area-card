@@ -16,6 +16,7 @@ import { cardType, EntityRegistryDisplayEntry, HomeAssistantArea, HomeAssistantE
 
 import { HassEntity } from 'home-assistant-js-websocket';
 import { version as pkgVersion } from "../package.json";
+import { computeEntityName, entityNamesChanged } from "./entity-name";
 
 
 /* eslint no-console: 0 */
@@ -252,7 +253,7 @@ class MinimalisticAreaCard extends LitElement {
         }
 
         const active = stateObj && stateObj.state && STATES_OFF.indexOf(stateObj.state.toString().toLowerCase()) === -1;
-        const title = `${stateObj.attributes?.friendly_name || stateObj.entity_id}: ${computeStateDisplay(this.hass?.localize, stateObj, this.hass?.locale)}`;
+        const title = `${computeEntityName(this.hass, stateObj)}: ${computeStateDisplay(this.hass?.localize, stateObj, this.hass?.locale)}`;
 
         return html`
     <div class="wrapper">
@@ -411,6 +412,13 @@ class MinimalisticAreaCard extends LitElement {
 
     shouldUpdate(changedProps) {
         if (hasConfigOrEntityChanged(this, changedProps, false)) {
+            return true;
+        }
+
+        // Names resolve against the entity/device/area/floor registries, and HA
+        // swaps the real formatEntityName in asynchronously once translations
+        // load. Neither changes an entity state, so neither shows up above.
+        if (entityNamesChanged(changedProps.get("hass"), this.hass)) {
             return true;
         }
 
